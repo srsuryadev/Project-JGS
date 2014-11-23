@@ -1,4 +1,4 @@
 Project-JGS
 ===========
 
-This project aims is to learn javascript
+This project aim is to learn javascript
