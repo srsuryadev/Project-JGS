@@ -1,0 +1,244 @@
+<html>
+
+<head>
+<script src="sprite.js"></script>
+<style>
+	
+	canvas {
+		display: block;
+		position: absolute;
+		margin: auto;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+
+	
+</style>
+
+</head>
+
+<body>
+
+
+<script>
+
+	var canvas,width,height,ctx,counter=0,
+		frames=0,
+		peace=0,
+		currentstate,
+		states={Splash: 0,Game: 1,Score: 2},
+		peace=100,
+		elements=new Array();
+		fb={
+				x:300,
+				y:0,
+
+				update:function(){
+					this.y=this.y+1;
+				},
+
+				draw:function(ctx){
+					s_fb.draw(ctx,this.x,this.y);
+				}
+
+
+		},
+
+		wa={
+				x:150,
+				y:0,
+
+				update:function(){
+					this.y=this.y+1;
+				},
+
+				draw:function(ctx){
+					s_wa.draw(ctx,this.x,this.y);
+				}
+
+		},
+	
+		player={
+
+			x:300,
+			y:700,
+			frame:0,
+			rotation: 0,
+
+			left_move: function(){
+				this.x=this.x-20;
+			},
+
+			right_move: function(){
+				this.x=this.x+20;
+			},
+
+			update: function(){
+
+
+			},
+
+			draw: function(ctx){
+
+				ctx.save();
+				ctx.translate(this.x,this.y);
+				s_player.draw(ctx,-s_player.width/2,-s_player.height/2);
+				ctx.restore();
+
+			}
+
+
+
+		},
+		
+		distelem={},
+		
+		
+		boxArray=new Image();
+		boxArray.src="res/fb.png";
+	function main(){
+		canvas=document.createElement("canvas");
+		width=window.innerWidth;
+		height=window.innerHeight;
+		
+		if(width>=550){
+			width=550;
+			height=600;
+			canvas.style.border="1px solid #000";
+		}
+
+		canvas.width= width;
+		canvas.height=height;
+		canvas.style.background="#000000";
+		ctx=canvas.getContext("2d");
+		document.body.appendChild(canvas);	
+
+		var img=new Image()
+		img.onload=function(){
+				
+				initSprites(this);
+				
+				run();
+		}	
+		img.src="sheet.jpg";
+		document.addEventListener("keydown",keyDownHandler, false);	
+	}
+
+	function testcollision(){
+		//ctx.fillText("player is : "+player.x+"   "+player.y,50,90);
+		//ctx.fillText("fb :  "+fb.x+"  "+fb.y,50,100);
+
+		if(player.x==480&&player.y==700&&fb.x==300&&fb.y==500){
+			peace=peace-10;
+
+		}
+
+	}
+
+	function keyDownHandler(event)
+	{
+
+		switch(event.keyCode){
+
+			case 37:
+				player.left_move();
+				break;
+			case 39:
+				player.right_move();
+				break;
+		}
+	}
+	var temp=0;
+	function updatetext () {
+		// body...
+
+		counter++;
+		if(counter==100){
+			counter=0;
+			temp++;	
+		}
+		ctx.fillStyle="white";
+		ctx.fillText("Time is : "+temp,50,60);
+		ctx.fillText("Peace :"+peace,50,80);
+	}
+
+	function run(){
+	
+		var loop=function(){
+			update();
+			render();
+			testcollision();
+			updatetext();
+			window.requestAnimationFrame(loop,canvas);
+		}
+		window.requestAnimationFrame(loop,canvas);
+	}
+
+	function update(){
+		//fb.update();
+		//wa.update();
+		var rand_num=Math.random();
+		if(rand_num<0.50){
+			var element;
+			if(rand_num>0.10&&rand_num<0.20){
+				element=new fb();
+			}
+			if(rand_num<0.10&&rand_num>0){
+				element=new wa();
+			}
+			if(rand_num>0.10&&rand_num<2.0){
+				element=new coursera();
+
+
+			}
+			if(rand_num>0.30&&rand_num<0.40){
+				element=new quora();
+			}
+			element.x=Math.floor(Math.random()*canvas.width);
+			element.y=0;
+			elements.push(element);
+		}
+
+		for (var i = elements.length - 1; i >= 0; i--) {
+			elements[i].y++;
+			if(elements[i].y>canvas.height){
+				elements.splice(i,1);
+			}
+			else{
+				if(testcollision(elements[i].x,elements.y)){
+					elements.splice(i,1);
+				}
+			}
+		}
+
+	
+
+	}
+
+	function render(){
+		
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+		//s_bg.draw(ctx,0,0);
+		//s_bg.draw(ctx,s_bg.width,height-s_bg.height);
+		player.draw(ctx);
+		for (var i = elements.length - 1; i >= 0; i--) {
+			elements[i].draw(ctx);
+		}
+		//fb.draw(ctx);
+		//wa.draw(ctx);
+		//fb.draw(ctx);
+	} 
+
+	main();
+
+</script>
+
+
+
+</body>
+
+
+
+</html>
